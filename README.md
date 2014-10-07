@@ -2,21 +2,29 @@
 [![Coverage Status](https://coveralls.io/repos/AlexStanovsky/index_tree/badge.png?branch=master)](https://coveralls.io/r/AlexStanovsky/index_tree?branch=master)
 # IndexTree
 
-This Gem eagerly loads trees by indexing the nodes of the tree. The number of queries needed for loading a tree is N, 
-Where N is the number of different models(ActiveRecords) in the tree.
+Eager load trees - load the entire tree using the same number of db queries as the number of models in the tree. 
 
-Each inner object in the tree have an index node instance that is connecting it to the root.
-When the root of the tree is loaded, only the objects that are in the tree are fetched(Pruning).
+
+//.indexing the nodes of the tree. The number of queries needed for loading a tree is N, 
+//Where N is the number of different models(ActiveRecords) in the tree.
+
+## Implementation
+The gem creates
+
+Each inner object in the tree has an index node instance that is connecting it to the root.
+When the root of the tree is loaded, only the objects that are in the tree are fetched.
 The index nodes are created when the root element is saved and stored in the IndexNode model.
 
 ## Example:
+For example, a mathematical equation can be represented by a tree. Each node in an expression can represent a value or an operator. 
+
 ### Models definitions:
     class Equation < ActiveRecord::Base
         acts_as_indexed_node :root => true do
-            has_many :expressions
+            belongs_to :expression
         end
       
-        has_one :not_tree_association_a
+        has_one :not_included_in_tree_association_a
         
         def traverse
            expression.traverse
